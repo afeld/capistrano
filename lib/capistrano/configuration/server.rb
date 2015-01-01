@@ -51,6 +51,10 @@ module Capistrano
           '-l' => netssh_options[:user],
           '-p' => port
         }
+        proxy = netssh_options[:proxy]
+        if proxy
+          opts['-o'] = "\"ProxyCommand #{proxy.command_line_template}\""
+        end
         opts.delete_if {|k,v| v.nil? }
         opts.to_a.flatten.join(' ')
       end

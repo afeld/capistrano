@@ -279,6 +279,18 @@ module Capistrano
           let(:server_host) { 'user_name@hostname' }
           it { expect(server.ssh_command).to eq('ssh -l user_name hostname') }
         end
+
+        context 'with proxy' do
+          let(:ssh_options) do
+            { proxy: Net::SSH::Proxy::Command.new('ssh mygateway.com -W %h:%p') }
+          end
+
+          before do
+            server.with(ssh_options: ssh_options)
+          end
+
+          it { expect(server.ssh_command).to eq(%{ssh -l root -p 1234 -o "ProxyCommand ssh mygateway.com -W %h:%p" hostname}) }
+        end
       end
 
       describe ".[]" do

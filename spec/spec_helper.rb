@@ -3,6 +3,7 @@ $LOAD_PATH.unshift(File.dirname(__FILE__))
 require 'capistrano/all'
 require 'rspec'
 require 'mocha/api'
+require 'net/ssh/proxy/command'
 require 'time'
 
 # Requires supporting files with custom matchers and macros, etc,
