@@ -46,6 +46,23 @@ module Capistrano
         @netssh_options ||= super.merge( fetch(:ssh_options) || {} )
       end
 
+      def ssh_options_str
+        opts = {
+          '-l' => netssh_options[:user],
+          '-p' => port
+        }
+        opts.delete_if {|k,v| v.nil? }
+        opts.to_a.flatten.join(' ')
+      end
+
+      def ssh_command
+        [
+          'ssh',
+          ssh_options_str,
+          hostname
+        ].reject(&:empty?).join(' ')
+      end
+
       def roles_array
         roles.to_a
       end

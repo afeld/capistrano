@@ -3,7 +3,8 @@ require 'spec_helper'
 module Capistrano
   class Configuration
     describe Server do
-      let(:server) { Server.new('root@hostname:1234') }
+      let(:server_host) { 'root@hostname:1234' }
+      let(:server) { Server.new(server_host) }
 
       describe 'adding a role' do
         subject { server.add_role(:test) }
@@ -231,7 +232,7 @@ module Capistrano
       end
 
       describe 'assign ssh_options' do
-        let(:server) { Server.new('user_name@hostname') }
+        let(:server_host) { 'user_name@hostname' }
 
         context 'defaults' do
           it 'forward agent' do
@@ -261,6 +262,22 @@ module Capistrano
           it 'returns the ssh_options' do
             expect(server.netssh_options).to eq(ssh_options)
           end
+        end
+      end
+
+      describe '#ssh_command' do
+        context 'with port' do
+          it { expect(server.ssh_command).to eq('ssh -l root -p 1234 hostname') }
+        end
+
+        context 'without user' do
+          let(:server_host) { 'hostname' }
+          it { expect(server.ssh_command).to eq('ssh hostname') }
+        end
+
+        context 'without port' do
+          let(:server_host) { 'user_name@hostname' }
+          it { expect(server.ssh_command).to eq('ssh -l user_name hostname') }
         end
       end
 
